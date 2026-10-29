@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Employee {
+public:
+    int id;
+    string name;
+    double basic;
+    double bonus;
+
+    // returns a reference to basic salary
+    decltype(auto) getBasic() 
+    { 
+        return (basic); 
+    }
+};
+
+int main() {
+    // Designated initializers
+    Employee e{ .id = 101, .name = "Rahul", .basic = 50000, .bonus = 5000 };
+
+    // auto
+    auto name = e.name;
+    auto id = e.id;
+    auto gross = e.basic + e.bonus;
+
+    // decltype
+    decltype(e.basic) copySalary = e.basic;
+
+    // decltype(auto) -> reference, so we can change the real salary
+    decltype(auto) ref = e.getBasic();
+    ref = ref + 10000;
+
+    // gross after update
+    gross = e.basic + e.bonus;
+
+    cout << "ID: " << id << "\n";
+    cout << "Name: " << name << "\n";
+    cout << "Old Basic: " << copySalary << "\n";
+    cout << "New Basic: " << e.basic << "\n";
+    cout << "Gross: " << gross << "\n";
+
+    // auto vs decltype(auto)
+    auto a = e.getBasic();            // copy
+    decltype(auto) d = e.getBasic();  // reference
+
+    a = 1;      // does NOT change e.basic
+    cout << "After auto change: " << e.basic << "\n";
+
+    d = 70000;  // changes e.basic
+    cout << "After decltype(auto) change: " << e.basic << "\n";
+
+    return 0;
+}
