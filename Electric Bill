@@ -1,0 +1,62 @@
+#include <iostream>
+using namespace std;
+constinit int baseRate = 5;
+constexpr int calculateBill(int units)   //can run at compile time OR runtime
+{
+    if (units <= 100)
+    {
+        return units * 5;
+    }
+    else if (units <= 200)
+    {
+        return 100 * 5 + (units - 100) * 7;
+    }
+    else
+    {
+        return 100 * 5 + 100 * 7 + (units - 200) * 10;
+    }
+} 
+consteval int square(int x) //must run at compile time
+{
+    return x * x;
+}
+
+class ElectricityBill 
+{
+    public:
+    int units;
+    int getBill() const 
+    {
+        return calculateBill(units);
+    }
+};
+
+int main() 
+{
+    cout << "Base rate: " << baseRate << "\n";
+    baseRate = 6;   // allowed (constinit is NOT const)
+    cout << "Base rate changed to: " << baseRate << "\n\n";
+
+    
+    cout << "Square of 12 = " << square(12) << "\n"; // consteval, calculated by the compiler only at compile time
+
+    ElectricityBill b1{ 80 };
+    ElectricityBill b2{ 150 };
+    ElectricityBill b3{ 250 };
+
+    cout << "Bill for 80 units  = " << b1.getBill() << "\n";
+    cout << "Bill for 150 units = " << b2.getBill() << "\n";
+    cout << "Bill for 250 units = " << b3.getBill() << "\n";
+
+    //  compile-time vs runtime
+    constexpr int compileTimeBill = calculateBill(250);  // compiler calculates this
+    int units = 250;
+    int runTimeBill = calculateBill(units);              // calculated when program runs
+
+    cout << "Compile-time bill = " << compileTimeBill << "\n";
+    cout << "Runtime bill      = " << runTimeBill << "\n";
+
+ 
+
+    return 0;
+}
