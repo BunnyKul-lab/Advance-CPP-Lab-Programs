@@ -1,0 +1,58 @@
+#include <iostream>
+#include <compare>
+#include <utility>
+
+class Date
+{
+public:
+    int day, month, year;
+
+    Date(int d, int m, int y) : day(d), month(m), year(y) {}
+
+    // Three-way comparison: compares year, then month, then day.
+    // The compiler also auto-generates ==, != from a defaulted <=>
+    // only if defaulted; here we define <=> manually, so we default == too.
+    std::strong_ordering operator<=>(const Date& other) const {
+        if (auto c = year <=> other.year; c != 0) return c;
+        if (auto c = month <=> other.month; c != 0) return c;
+        return day <=> other.day;
+    }
+    bool operator==(const Date& other) const = default;
+};
+
+// Part B: returns day and month as a pair
+std::pair<int, int> getDateInfo(const Date& d) 
+{
+    return {d.day, d.month};
+}
+
+int main() 
+{
+    // ---------- Part A ----------
+    Date d1(15, 8, 2024);
+    Date d2(20, 3, 2025);
+
+    std::cout << "Date 1: " << d1.day << "/" << d1.month << "/" << d1.year << "\n";
+    std::cout << "Date 2: " << d2.day << "/" << d2.month << "/" << d2.year << "\n\n";
+
+    std::cout << std::boolalpha;
+    std::cout << "d1 <  d2 : " << (d1 <  d2) << "\n";
+    std::cout << "d1 >  d2 : " << (d1 >  d2) << "\n";
+    std::cout << "d1 <= d2 : " << (d1 <= d2) << "\n";
+    std::cout << "d1 >= d2 : " << (d1 >= d2) << "\n";
+    std::cout << "d1 == d2 : " << (d1 == d2) << "\n";
+    std::cout << "d1 != d2 : " << (d1 != d2) << "\n\n";
+
+    auto result = d1 <=> d2;
+    if (result < 0)       std::cout << "Date 1 is earlier than Date 2\n";
+    else if (result > 0)  std::cout << "Date 1 is later than Date 2\n";
+    else                  std::cout << "Both dates are equal\n";
+
+    // ---------- Part B ----------
+    auto [day, month] = getDateInfo(d1);
+    std::cout << "\nUnpacked using structured bindings:\n";
+    std::cout << "Day   = " << day << "\n";
+    std::cout << "Month = " << month << "\n";
+
+    return 0;
+}
